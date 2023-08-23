@@ -6,7 +6,7 @@ const { charactersInfo, charactersLoading } = useRickAndMortyApi();
 </script>
 
 <template>
-  <div class="flex flex-col bg-slate-800 md:flex-row md:flex-wrap md:justify-center ">
+  <div class="flex flex-col bg-slate-800 md:flex-row md:flex-wrap md:justify-center">
     <CharacterTable
       :characters="charactersInfo?.results!"
       :characters-loading="charactersLoading"

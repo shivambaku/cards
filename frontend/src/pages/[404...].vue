@@ -1,5 +1,5 @@
 <template>
   <div>
-    This is an about page
+    404 - Page not found
   </div>
 </template>
