@@ -97,11 +97,7 @@ export interface Info<T> {
 
 export function useRickAndMortyApi() {
   const { data: charactersInfo, isLoading: charactersLoading } = useQuery<Info<Character[]>>(
-    ['characters'],
-    async () => {
-      const response = await axios.get<Info<Character[]>>('https://rickandmortyapi.com/api/character');
-      return response.data;
-    },
+    ['https://rickandmortyapi.com/api/character'],
   );
 
   return {
