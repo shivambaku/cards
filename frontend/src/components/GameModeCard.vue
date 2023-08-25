@@ -1,10 +1,18 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
+
 defineProps({
   id: Number,
   title: String,
   playersCount: Number,
   roomsCount: Number,
 });
+
+const router = useRouter();
+
+function goToNewRoute(id: any) {
+  router.push(`/desk/${id}_p`);
+}
 </script>
 
 <template>
@@ -23,7 +31,7 @@ defineProps({
         <button class="my-2 rounded-md bg-blue-500 p-2 text-sm text-white md:px-4 md:text-lg">
           Fast Play
         </button>
-        <button class="my-2 rounded-md bg-green-500 px-4 py-2 text-sm text-white md:text-lg">
+        <button class="my-2 rounded-md bg-green-500 px-4 py-2 text-sm text-white md:text-lg" @click="goToNewRoute(id)">
           Choose
         </button>
       </div>

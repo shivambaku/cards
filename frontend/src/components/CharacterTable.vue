@@ -1,4 +1,4 @@
-`<script setup lang="ts">
+<script setup lang="ts">
 import type { Character } from '@/composables/useRickAndMortyApi';
 import CharacterCard from '@/components/CharacterCard.vue';
 
