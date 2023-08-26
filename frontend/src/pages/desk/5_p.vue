@@ -64,10 +64,10 @@ const newRoundButtonClass = computed(() => {
 <template>
   <div class="flex h-screen w-screen items-end bg-gray-800 pb-32 ">
     <div class="relative flex h-1/3 w-full items-center justify-center">
-      <Card v-for="(card, index) in gameState.players[0].cards" :key="card.img" :name="card.img" class="absolute origin-bottom" :class="[calculateRotationClass(0, index), calculateTranslationClass(0, index)]" />
+      <Card v-for="(card, index) in gameState.players[0].cards" :key="card.img" :card="card" class="absolute origin-bottom" :class="[calculateRotationClass(0, index), calculateTranslationClass(0, index)]" />
     </div>
     <div class="fixed top-5 flex h-1/3 w-full rotate-180 items-center justify-center">
-      <Card v-for="(card, index) in gameState.players[1].cards" :key="card.img" :name="card.img" class="absolute origin-bottom" :class="calculateRotationClass(1, index)" />
+      <Card v-for="(card, index) in gameState.players[1].cards" :key="card.img" :card="card" class="absolute origin-bottom" :class="calculateRotationClass(1, index)" />
     </div>
     <button :disabled="gameState.gameFinished" class="p-2 text-white" :class="newRoundButtonClass" @click="newRound">
       New Round
