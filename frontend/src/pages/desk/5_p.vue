@@ -57,7 +57,7 @@ function calculateTranslationClass(playerIndex: number, index: number) {
 }
 
 const newRoundButtonClass = computed(() => {
-  return gameState.value.gameFinished ? 'bg-gray-500' : '';
+  return gameState.value.gameFinished ? 'bg-gray-500' : 'bg-red-500';
 });
 </script>
 
@@ -69,7 +69,7 @@ const newRoundButtonClass = computed(() => {
     <div class="fixed top-5 flex h-1/3 w-full rotate-180 items-center justify-center">
       <Card v-for="(card, index) in gameState.players[1].cards" :key="card.img" :name="card.img" class="absolute origin-bottom" :class="calculateRotationClass(1, index)" />
     </div>
-    <button :disabled="gameState.gameFinished" class="bg-red-500 p-2 text-white" :class="newRoundButtonClass" @click="newRound">
+    <button :disabled="gameState.gameFinished" class="p-2 text-white" :class="newRoundButtonClass" @click="newRound">
       New Round
     </button>
   </div>
