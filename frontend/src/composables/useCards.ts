@@ -1,3 +1,5 @@
+import { useShuffle } from './useShuffle';
+
 export enum Suit {
   Spades = 'spades',
   Hearts = 'hearts',
@@ -29,23 +31,6 @@ export function useCards() {
     }
   }
 
-  function shuffleDeck(deck: any[]) {
-    let currentIndex = deck.length;
-    let randomIndex;
-    let tempValue;
-
-    while (currentIndex !== 0) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-
-      tempValue = deck[currentIndex];
-      deck[currentIndex] = deck[randomIndex];
-      deck[randomIndex] = tempValue;
-    }
-
-    return deck;
-  }
-
   function createDeck(shuffle: boolean = false): Card[] {
     const cards = suits.flatMap((suit) => {
       return Array.from({ length: 13 }, (_, i) => {
@@ -57,7 +42,7 @@ export function useCards() {
     });
 
     if (shuffle)
-      return shuffleDeck(cards);
+      return useShuffle(cards);
 
     return cards;
   }
