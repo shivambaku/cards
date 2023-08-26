@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   id: Number,
   name: String,
   suit: Number,
@@ -10,6 +10,6 @@ defineProps({
 
 <template>
   <div class="flex h-[180px] w-[120px] items-center justify-center">
-    <img :src="`/src/assets/cards/${name}.svg`" alt="" class="max-h-full max-w-full hover:mb-20">
+    <img :src="`/src/assets/cards/${name}`" alt="" class="max-h-full max-w-full hover:mb-20">
   </div>
 </template>
