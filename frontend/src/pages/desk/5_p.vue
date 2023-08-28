@@ -4,7 +4,7 @@ import Card from '@/components/Card.vue';
 import Player from '@/components/Player.vue';
 import { useJudgementGame } from '@/composables/useJudgementGame';
 
-const { gameState, newRound } = useJudgementGame(5);
+const { gameState, newRound, roundFinished } = useJudgementGame(5);
 
 newRound();
 
@@ -57,7 +57,7 @@ function calculateTranslationClass(_playerIndex: number, _index: number) {
   return '';
 }
 
-const newRoundButtonClass = computed(() => {
+const roundFinishedButtonClass = computed(() => {
   return gameState.value.gameFinished ? 'bg-gray-500' : 'bg-red-500';
 });
 </script>
@@ -83,8 +83,8 @@ const newRoundButtonClass = computed(() => {
       <Player :id="gameState.players[4].id" name="Player 4" :tricks="0" :bid="3" :score="120" class="rotate-180" />
       <Card v-for="(card, index) in gameState.players[4].cards" :key="card.img" :card="card" class="absolute h-[60px] w-[40px] origin-bottom" :class="calculateRotationClass(1, index)" />
     </div>
-    <button :disabled="gameState.gameFinished" class="fixed right-0 top-0 p-2 text-white" :class="newRoundButtonClass" @click="newRound">
-      New Round
+    <button :disabled="gameState.gameFinished" class="fixed right-0 top-0 p-2 text-white" :class="roundFinishedButtonClass" @click="roundFinished">
+      Finish Round
     </button>
     <div class="fixed top-0 h-[60px] w-[40px] flex-row items-center justify-center">
       <p class=" text-center text-xs  text-white">
