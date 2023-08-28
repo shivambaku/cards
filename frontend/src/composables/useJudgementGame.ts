@@ -69,7 +69,6 @@ export function useJudgementGame(numberOfPlayers: number) {
 
   function newRound() {
     dealCards();
-    roundFinished();
   }
 
   function roundFinished() {
@@ -79,15 +78,21 @@ export function useJudgementGame(numberOfPlayers: number) {
       return;
     }
 
+    const currentTrumpIndex = trumpOrder.indexOf(gameState.value.currentTrump);
+    const nextTrumpIndex = (currentTrumpIndex + 1) % trumpOrder.length;
+    gameState.value.currentTrump = trumpOrder[nextTrumpIndex];
+
     if (gameState.value.currentCardCount === 1)
       gameState.value.upOrDownCoefficient = 1;
 
     gameState.value.currentCardCount += gameState.value.upOrDownCoefficient;
-    gameState.value.currentTrump = trumpOrder[trumpOrder.indexOf(gameState.value.currentTrump) + 1];
+
+    newRound();
   }
 
   return {
     gameState,
     newRound,
+    roundFinished,
   };
 }

@@ -5,7 +5,7 @@ const props = defineProps<{
   id: number
   title: string
   playersCount: number
-  roomsCount: string
+  roomsCount: number
 }>();
 
 const router = useRouter();
