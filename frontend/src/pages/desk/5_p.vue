@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, onMounted } from 'vue';
+import { useDraggable } from '@vueuse/core';
 import Card from '@/components/Card.vue';
 import Player from '@/components/Player.vue';
 import { useJudgementGame } from '@/composables/useJudgementGame';
@@ -30,7 +31,7 @@ function newRound() {
 </script>
 
 <template>
-  <div class="flex h-screen w-screen items-end bg-gray-800 pb-5 ">
+  <div class="flex h-screen w-screen items-end pb-5">
     <div class="relative flex h-1/3 w-full items-center justify-center">
       <Card v-for="(card, index) in currentRound.hands[0].cards" :key="card.img" :card="card" class="absolute origin-bottom" :class="[calculateRotationClass(0, index), calculateTranslationClass(0, index)]" />
     </div>
@@ -54,7 +55,7 @@ function newRound() {
       New Round
     </button>
     <div class="fixed top-0 h-[60px] w-[40px] flex-row items-center justify-center">
-      <p class=" text-center text-xs  text-white">
+      <p class=" text-center text-xs text-white">
         TRUMP
       </p>
       <img :src="`/src/assets/cards/${currentRound.currentTrump}.svg`" alt="" class="max-h-full max-w-full">
