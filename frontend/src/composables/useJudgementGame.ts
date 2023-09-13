@@ -88,6 +88,14 @@ export function useJudgementGame(numberOfPlayers: number) {
     ],
   });
 
+  const totalRounds = computed(() => {
+    return gameState.value.maxAmountOfCards * 2 - 1;
+  });
+
+  const roundsPlayed = computed(() => {
+    return gameState.value.rounds.length;
+  });
+
   const currentRound = computed(() => {
     return gameState.value.rounds[gameState.value.rounds.length - 1];
   });
@@ -247,6 +255,8 @@ export function useJudgementGame(numberOfPlayers: number) {
 
   return {
     gameState,
+    totalRounds,
+    roundsPlayed,
     currentRound,
     currentTurn,
     dealCards,
