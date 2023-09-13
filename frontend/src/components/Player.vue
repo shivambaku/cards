@@ -1,25 +1,26 @@
 <script setup lang="ts">
+import { Icon } from '@iconify/vue';
+
 const props = defineProps<{
   id: number
   name: string
   score: number
   bid: number
   tricks: number
+  turn: string
 }>();
 </script>
 
 <template>
-  <div class="bottom-20 h-[150px] w-[80px] flex-row items-center justify-center text-xs text-white">
-    <p class=" text-center">
-      Total - {{ props.score }}
+  <div class="bottom-20 z-10 h-[150px] w-[80px] flex-row items-center justify-center text-xs text-white">
+    <p class=" absolute  left-[28%] top-[55%] text-center ">
+      [ {{ props.tricks }} / {{ props.bid }} ]
     </p>
-
-    <p class=" text-center">
-      [{{ props.tricks }} / {{ props.bid }}]
-    </p>
-    <p class=" text-center">
+    <p class="mb-1 text-center">
       {{ props.name }}
     </p>
-    <img src="/src/assets/player.svg" alt="" class=" max-h-full max-w-full">
+    <Icon
+      icon="fa-solid:user" class=" text-[90px] text-black " :class="turn"
+    />
   </div>
 </template>
