@@ -10,7 +10,6 @@ export enum Suit {
 export interface Card {
   suit: Suit
   value: number // 1-13
-  name: string
   img: string
 }
 
@@ -37,8 +36,8 @@ export function useCards() {
       return Array.from({ length: 13 }, (_, i) => {
         const value = i + 1;
         const rank = valueToRank(value).toString().toLowerCase();
-        const name = `${rank}_of_${suit}`;
-        return { suit, value, name, img: `${name}.svg` };
+        const img = `${rank}_of_${suit}.svg`;
+        return { suit, value, img };
       });
     });
 

@@ -4,7 +4,7 @@ import { RouterView } from 'vue-router';
 
 <template>
   <nav class="border-gray-800 bg-gray-800 dark:bg-gray-800 ">
-    <div class="fixed bottom-0 left-1/2 z-50 h-16 w-full max-w-lg -translate-x-1/2 rounded-full border border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700">
+    <div class="fixed bottom-4 left-1/2 z-50 h-16 w-full max-w-lg -translate-x-1/2 rounded-full border border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700">
       <div class="mx-auto grid h-full max-w-lg grid-cols-3">
         <!-- Home -->
         <router-link to="/" data-tooltip-target="tooltip-home" class="group relative inline-flex flex-col items-center justify-center rounded-l-full px-5 hover:bg-gray-50 dark:hover:bg-gray-800">
