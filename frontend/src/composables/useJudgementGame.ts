@@ -200,7 +200,16 @@ export function useJudgementGame(numberOfPlayers: number) {
     currentRound.value.turns.push(nextTurn);
   }
 
+  function computeScores() {
+    currentRound.value.calls.forEach((call) => {
+      if (call.tricks === call.call)
+        call.player.score += 10 * call.call;
+    });
+  }
+
   function finishRound() {
+    computeScores();
+
     currentRound.value.state = 'Finished';
 
     if (currentRound.value.currentCardCount === gameState.value.maxAmountOfCards && gameState.value.upOrDownCoefficient === 1) {
