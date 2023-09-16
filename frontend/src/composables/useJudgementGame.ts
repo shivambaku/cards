@@ -57,7 +57,7 @@ export function useJudgementGame(numberOfPlayers: number) {
     for (let i = 0; i < numberOfPlayers; i++) {
       players.push({
         id: i,
-        name: `Player ${i + 1}`,
+        name: `Player ${i}`,
         score: 0,
       });
     }
@@ -151,7 +151,7 @@ export function useJudgementGame(numberOfPlayers: number) {
     }
 
     const currentCallPlayerIndex = gameState.value.players.indexOf(currentRound.value.currentCallPlayer);
-    const nextCallPlayer = gameState.value.players[currentCallPlayerIndex + 1];
+    const nextCallPlayer = gameState.value.players[(currentCallPlayerIndex + 1) % gameState.value.players.length];
     currentRound.value.currentCallPlayer = nextCallPlayer;
   }
 
