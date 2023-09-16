@@ -11,7 +11,7 @@ const props = defineProps<{
 const router = useRouter();
 
 function goToNewRoute(id: any) {
-  router.push(`/desk/${id}_p`);
+  router.push(`/desk/${id}`);
 }
 </script>
 
