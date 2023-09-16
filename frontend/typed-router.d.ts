@@ -44,7 +44,6 @@ declare module 'vue-router/auto/routes' {
     '/characters': RouteRecordInfo<'/characters', '/characters', Record<never, never>, Record<never, never>>,
     '/counter': RouteRecordInfo<'/counter', '/counter', Record<never, never>, Record<never, never>>,
     '/desk/[playerCount]': RouteRecordInfo<'/desk/[playerCount]', '/desk/:playerCount', { playerCount: ParamValue<true> }, { playerCount: ParamValue<false> }>,
-    '/room': RouteRecordInfo<'/room', '/room', Record<never, never>, Record<never, never>>,
   }
 }
 
