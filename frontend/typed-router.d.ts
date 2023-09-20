@@ -41,11 +41,8 @@ declare module 'vue-router/auto/routes' {
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
     '/[404...]': RouteRecordInfo<'/[404...]', '/:404(.*)', { 404: ParamValue<true> }, { 404: ParamValue<false> }>,
-    '/characters': RouteRecordInfo<'/characters', '/characters', Record<never, never>, Record<never, never>>,
     '/counter': RouteRecordInfo<'/counter', '/counter', Record<never, never>, Record<never, never>>,
-    '/desk/3_p': RouteRecordInfo<'/desk/3_p', '/desk/3_p', Record<never, never>, Record<never, never>>,
-    '/desk/4_p': RouteRecordInfo<'/desk/4_p', '/desk/4_p', Record<never, never>, Record<never, never>>,
-    '/desk/5_p': RouteRecordInfo<'/desk/5_p', '/desk/5_p', Record<never, never>, Record<never, never>>,
+    '/game/[:playerCount]': RouteRecordInfo<'/game/[:playerCount]', '/game/::playerCount', { :playerCount: ParamValue<true> }, { :playerCount: ParamValue<false> }>,
     '/room': RouteRecordInfo<'/room', '/room', Record<never, never>, Record<never, never>>,
   }
 }
