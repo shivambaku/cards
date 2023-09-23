@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
-import { computed, ref } from 'vue';
-import Card from '@/components/Card.vue';
+import { type Ref, computed, ref } from 'vue';
+import CardVue from '@/components/Card.vue';
 import Player from '@/components/Player.vue';
 import BidModal from '@/components/BidModal.vue';
 import type { JudgementPlayer, JudgementRound, JudgementRoundCall } from '@/composables/useJudgementGame';
+import { type Card } from '@/composables/useCards';
 
 const props = defineProps<{
   mainPlayerIndex: number
@@ -13,6 +14,12 @@ const props = defineProps<{
   players: JudgementPlayer[]
   makeCall: (call: JudgementRoundCall) => void
 }>();
+
+const emit = defineEmits<{
+  cardMouseDown: [Card, MouseEvent, HTMLElement, Ref<any[]>]
+}>();
+
+const cardRefs = ref<HTMLElement[]>([]);
 
 const positions = [
   [
@@ -81,18 +88,30 @@ function otherPlayerCall(index: number) {
   const otherPlayerIndex2 = otherPlayerIndex(index);
   return getCallByPlayer(props.players[otherPlayerIndex2]);
 }
+
+function cardMouseDown(card: Card, mouseEvent: MouseEvent, cardRef: HTMLElement) {
+  emit('cardMouseDown', card, mouseEvent, cardRef, cardRefs);
+}
 </script>
 
 <template>
   <BidModal v-if="showModal && currentRound.state === 'Calling'" :min="0" :max="currentRound.currentCardCount" :player="players[mainPlayerIndex]" :make-call="makeCall" @close="closeModal" />
-  <div class="relative mb-12 flex h-[35%] w-full items-center justify-center">
-    <div class="absolute top-0 z-50 flex items-center  justify-between">
+  <div class="relative flex h-[35%] w-full items-center justify-center">
+    <div class="absolute top-0 flex items-center  justify-between">
       <Icon :class="currentRound.currentCallPlayer.id === players[mainPlayerIndex].id ? 'text-green-500' : 'text-black'" icon="ic:twotone-circle" />
-      <p class=" pl-1">
+      <p class="pl-1">
         [ {{ myCall.tricks }} / {{ myCall.call }} ]
       </p>
     </div>
-    <Card v-for="(card, index) in currentRound.hands[mainPlayerIndex].cards" :key="card.img" player="main" :card="card" class="absolute origin-bottom" :class="[calculateRotationClass(0, index), calculateTranslationClass(0, index)]" />
+    <CardVue
+      v-for="(card, index) in currentRound.hands[mainPlayerIndex].cards"
+      ref="cardRefs" :key="card.img"
+      player="main"
+      :card="card"
+      class="absolute origin-bottom"
+      :class="[calculateRotationClass(0, index), calculateTranslationClass(0, index)]"
+      @card-mouse-down="cardMouseDown"
+    />
   </div>
   <div
     v-for="(position, index) in positionsForPlayers" :key="`position:${index}`"
@@ -100,6 +119,9 @@ function otherPlayerCall(index: number) {
     :class="[position.x, position.y]"
   >
     <Player :player="players[otherPlayerIndex(index)]" :call="otherPlayerCall(index)" :turn="currentRound.currentCallPlayer.id === players[otherPlayerIndex(index)].id ? 'text-green-500' : 'text-black'" class="rotate-180" />
-    <Card v-for="(card, index2) in currentRound.hands[(mainPlayerIndex + index + 1) % playerCount].cards" :key="card.img" player="other" :card="card" class="absolute -top-4 h-[60px] w-[40px] origin-bottom" :class="calculateRotationClass(1, index2)" />
+    <CardVue
+      v-for="(card, index2) in currentRound.hands[(mainPlayerIndex + index + 1) % playerCount].cards" :key="card.img" player="other" :card="card" class="absolute -top-4 h-[60px] w-[40px] origin-bottom"
+      :class="calculateRotationClass(1, index2)"
+    />
   </div>
 </template>

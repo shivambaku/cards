@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref } from 'vue';
+import { type Ref, computed, onBeforeMount, ref } from 'vue';
 import { useRoute } from 'vue-router/auto';
+import { useDraggable, useDropZone, useElementBounding } from '@vueuse/core';
 import { useJudgementGame } from '@/composables/useJudgementGame';
 import MainPlayerView from '@/components/MainPlayerView.vue';
+import CardVue from '@/components/Card.vue';
+import { type Card, Suit } from '@/composables/useCards';
 
 const route = useRoute();
 const playerCount = Number((route.params as any).playerCount);
@@ -20,6 +23,90 @@ function newRound() {
   dealCards();
 }
 
+const dropZoneRef = ref<HTMLDivElement>();
+
+const draggingCard = ref<Card | null>(null);
+const draggingCardIndex = ref<number | null>(null);
+const draggingCardRef = ref<HTMLElement | null>(null);
+
+const ghostCard = ref<Card>({
+  img: 'back.svg',
+  value: 0,
+  suit: Suit.Clubs,
+  name: 'ghost',
+});
+
+function isColliding(element: HTMLElement, otherElement: HTMLElement) {
+  const a = element.getBoundingClientRect();
+  const b = otherElement.getBoundingClientRect();
+
+  return !(
+    a.top + a.height < b.top
+    || a.top > b.top + b.height
+    || a.left + a.width < b.left
+    || a.left > b.left + b.width
+  );
+}
+
+function cardMouseDown(card: Card, mouseEvent: MouseEvent, cardRef: HTMLElement, cardRefs: Ref<any[]>) {
+  const cardIndex = currentRound.value.hands[lookingAtIndex.value].cards.findIndex(c => c.img === card.img);
+  currentRound.value.hands[lookingAtIndex.value].cards[cardIndex] = ghostCard.value;
+  draggingCard.value = card;
+  draggingCardIndex.value = cardIndex;
+
+  if (!draggingCardRef.value)
+    return;
+
+  moveAt(mouseEvent.clientX, mouseEvent.clientY);
+
+  function moveAt(x: number, y: number) {
+    const left = x - 60;
+    const right = y - 90;
+
+    draggingCardRef.value!.style.left = `${left}px`;
+    draggingCardRef.value!.style.top = `${right}px`;
+
+    if (isColliding(draggingCardRef.value!, dropZoneRef.value!))
+      dropZoneRef.value!.style.border = '8px solid red';
+
+    else
+      dropZoneRef.value!.style.border = 'none';
+
+    let otherCardIndex = 0;
+    for (const otherCardRef of cardRefs.value) {
+      if (isColliding(draggingCardRef.value!, otherCardRef.cardRef)) {
+        otherCardRef.cardRef.style.border = '2px solid red';
+        currentRound.value.hands[lookingAtIndex.value].cards.splice(draggingCardIndex.value!, 1);
+        currentRound.value.hands[lookingAtIndex.value].cards.splice(otherCardIndex, 0, ghostCard.value);
+        draggingCardIndex.value = otherCardIndex;
+        break;
+      }
+
+      else { otherCardRef.cardRef.style.border = 'none'; }
+
+      ++otherCardIndex;
+    }
+  }
+
+  function onMouseMove(event: MouseEvent) {
+    moveAt(event.pageX, event.pageY);
+  }
+
+  function onMouseUp(_: MouseEvent) {
+    if (isColliding(draggingCardRef.value!, dropZoneRef.value!))
+      currentRound.value.hands[lookingAtIndex.value].cards.splice(draggingCardIndex.value!, 1);
+    else
+      currentRound.value.hands[lookingAtIndex.value].cards[draggingCardIndex.value!] = draggingCard.value!;
+
+    draggingCard.value = null;
+    window.removeEventListener('mousemove', onMouseMove);
+    window.removeEventListener('mouseup', onMouseUp);
+  }
+
+  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('mouseup', onMouseUp);
+}
+
 onBeforeMount(() => {
   dealCards();
 });
@@ -27,15 +114,13 @@ onBeforeMount(() => {
 
 <template>
   <div class="flex h-screen w-screen items-end overflow-hidden">
-    <!-- <div class="fixed  left-[8%]  top-[90px] flex h-28 w-1/4 rotate-180 items-center justify-center">
-      <Player :id="gameState.players[1].id" :turn="currentRound.currentCallPlayer.id === gameState.players[1].id ? 'text-green-500' : 'text-black'" name="Player 2" :tricks="0" :bid="3" :score="120" class="rotate-180" />
-      <Card v-for="(card, index) in currentRound.hands[1].cards" :key="card.img" player="other" :card="card" class="absolute -top-4 h-[60px] w-[40px] origin-bottom" :class="calculateRotationClass(1, index)" />
-    </div>
-    <div class="fixed right-[8%] top-[90px] flex  h-28 w-1/4 rotate-180 items-center justify-center">
-      <Player :id="gameState.players[2].id" :turn="currentRound.currentCallPlayer.id === gameState.players[2].id ? 'text-green-500' : 'text-black'" name="Player 3" :tricks="0" :bid="3" :score="120" class="rotate-180" />
-      <Card v-for="(card, index) in currentRound.hands[2].cards" :key="card.img" player="other" :card="card" class="absolute -top-4 h-[60px] w-[40px] origin-bottom" :class="calculateRotationClass(1, index)" />
-    </div> -->
-    <MainPlayerView :make-call="makeCall" :main-player-index="lookingAtIndex" :current-round="currentRound" :players="gameState.players" :player-count="playerCount" />
+    <MainPlayerView
+      :make-call="makeCall" :main-player-index="lookingAtIndex"
+      :current-round="currentRound"
+      :players="gameState.players"
+      :player-count="playerCount"
+      @card-mouse-down="cardMouseDown"
+    />
     <button :disabled="gameState.gameFinished" class="fixed right-0 top-0 h-[40px] w-[100px] p-2 text-white" :class="newRoundButtonClass" @click="newRound">
       <p v-if=" totalRounds - roundsPlayed > 0">
         New Round
@@ -49,6 +134,10 @@ onBeforeMount(() => {
         {{ player.name }}
       </option>
     </select>
+    <div
+      ref="dropZoneRef"
+      class="absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 bg-orange-400 text-white"
+    />
     <div class="fixed right-0 top-[37%]  m-2 h-[80px] w-[40px] flex-row items-center justify-center">
       <p class=" text-center text-xs text-white">
         TRUMP
@@ -79,6 +168,18 @@ onBeforeMount(() => {
       <p class="">
         Left - {{ totalRounds - roundsPlayed }}
       </p>
+    </div>
+
+    <div
+      ref="draggingCardRef"
+      style="position: absolute;"
+      @mouseDown="mouseDown"
+    >
+      <CardVue
+        v-if="draggingCard"
+        player="system"
+        :card="draggingCard"
+      />
     </div>
   </div>
 </template>
