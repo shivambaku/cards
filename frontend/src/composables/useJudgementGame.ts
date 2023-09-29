@@ -164,7 +164,9 @@ export function useJudgementGame(numberOfPlayers: number) {
     if (!hand.cards.includes(play.card))
       throw new Error(`${play.player} does not have the ${play.card}`);
 
-    if (hand.cards.some(c => c.suit === currentTurn.value.plays[0].card.suit) && play.card.suit !== currentTurn.value.plays[0].card.suit)
+    if (currentTurn.value.plays.length !== 0
+      && hand.cards.some(c => c.suit === currentTurn.value.plays[0].card.suit)
+      && play.card.suit !== currentTurn.value.plays[0].card.suit)
       throw new Error(`${play.player} must follow suit`);
 
     currentTurn.value.plays.push(play);
