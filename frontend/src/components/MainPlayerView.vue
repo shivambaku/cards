@@ -25,15 +25,40 @@ const positions = [
     { x: 'right-[8%]', y: 'top-[100px]' },
   ],
   [
-    { x: 'left-3', y: 'top-[100px]' },
-    { x: 'left-[23%]', y: 'top-[40px]' },
-    { x: 'right-[23%]', y: 'top-[40px]' },
-    { x: 'right-3', y: 'top-[100px]' },
+    { x: 'left-3', y: 'top-[120px]' },
+    { x: 'left-[23%]', y: 'top-[60px]' },
+    { x: 'right-[23%]', y: 'top-[60px]' },
+    { x: 'right-3', y: 'top-[120px]' },
+  ],
+];
+
+const positionsCards = [
+  [
+    { x: 'bottom-0', y: '', z: '' },
+    { x: 'left-[28%]', y: 'top-0', z: 'rotate-[-25deg]' },
+    { x: 'right-[28%]', y: 'top-0', z: 'rotate-[25deg]' },
+  ],
+  [
+    { x: 'bottom-0', y: '', z: '' },
+    { x: 'left-[28%]', y: 'top-0', z: 'rotate-[-25deg]' },
+    { x: '', y: 'top-0', z: '' },
+    { x: 'right-[28%]', y: 'top-0', z: 'rotate-[25deg]' },
+  ],
+  [
+    { x: 'bottom-0', y: '', z: '' },
+    { x: 'left-[18%]', y: 'top-0', z: 'rotate-[-25deg]' },
+    { x: 'left-[34%]', y: 'top-0', z: 'rotate-[-15deg]' },
+    { x: 'right-[34%]', y: 'top-0', z: 'rotate-[15deg]' },
+    { x: 'right-[18%]', y: 'top-0', z: 'rotate-[25deg]' },
   ],
 ];
 
 const positionsForPlayers = computed(() => {
   return positions[props.playerCount - 3];
+});
+
+const positionsForPlayedCards = computed(() => {
+  return positionsCards[props.playerCount - 3];
 });
 
 const finishedBidding = ref(false);
@@ -81,18 +106,39 @@ function otherPlayerCall(index: number) {
   const otherPlayerIndex2 = otherPlayerIndex(index);
   return getCallByPlayer(props.players[otherPlayerIndex2]);
 }
+function PlayCard(card: any, index: any) {
+  const divId = `${index}`;
+  const divElement = document.getElementById(divId);
+
+  if (divElement) {
+    const imgElement = document.createElement('img');
+    imgElement.src = `/src/assets/cards/${card.img}`;
+    imgElement.alt = '';
+    imgElement.className = 'max-h-full w-[40px] max-w-full';
+
+    divElement.appendChild(imgElement);
+  }
+}
 </script>
 
 <template>
   <BidModal v-if="showModal && currentRound.state === 'Calling'" :min="0" :max="currentRound.currentCardCount" :player="players[mainPlayerIndex]" :make-call="makeCall" @close="closeModal" />
-  <div class="relative mb-12 flex h-[35%] w-full items-center justify-center">
-    <div class="absolute top-0 z-50 flex items-center  justify-between">
+  <div class=" relative top-[35%] flex h-[27%] w-full flex-row  items-center justify-center">
+    <div
+      v-for="(positionsCard, index) in positionsForPlayedCards" :id="`${index}`"
+      :key="`position:${index}`"
+      class="absolute bottom-0 m-2 items-center justify-center" :class="[positionsCard.x, positionsCard.y, positionsCard.z]"
+    />
+  </div>
+
+  <div class="fixed bottom-0 mb-0 flex h-[35%] w-full items-center justify-center">
+    <div class="absolute -top-2 z-50 mb-2 flex items-center  justify-between">
       <Icon :class="currentRound.currentCallPlayer.id === players[mainPlayerIndex].id ? 'text-green-500' : 'text-black'" icon="ic:twotone-circle" />
-      <p class=" pl-1">
+      <p class=" pl-1 text-white">
         [ {{ myCall.tricks }} / {{ myCall.call }} ]
       </p>
     </div>
-    <Card v-for="(card, index) in currentRound.hands[mainPlayerIndex].cards" :key="card.img" player="main" :card="card" class="absolute origin-bottom" :class="[calculateRotationClass(0, index), calculateTranslationClass(0, index)]" />
+    <Card v-for="(card, index) in currentRound.hands[mainPlayerIndex].cards" :key="card.img" player="main" :card="card" class="absolute origin-bottom" :class="[calculateRotationClass(0, index), calculateTranslationClass(0, index)]" @dblclick="PlayCard(card, players[mainPlayerIndex].id)" />
   </div>
   <div
     v-for="(position, index) in positionsForPlayers" :key="`position:${index}`"
