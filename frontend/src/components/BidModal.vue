@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { stringify } from 'node:querystring';
 import { ref } from 'vue';
 import type { JudgementPlayer, JudgementRoundCall } from '@/composables/useJudgementGame';
 

@@ -5,9 +5,11 @@ import { useJudgementGame } from '@/composables/useJudgementGame';
 import MainPlayerView from '@/components/MainPlayerView.vue';
 
 const route = useRoute();
+
 const playerCount = Number((route.params as any).playerCount);
 
-const { gameState, currentRound, dealCards, finishRound, totalRounds, roundsPlayed, makeCall } = useJudgementGame(playerCount);
+const judgementGame = useJudgementGame(playerCount);
+const { gameState, currentRound, dealCards, finishRound, totalRounds, roundsPlayed } = judgementGame;
 
 const lookingAtIndex = ref(0);
 
@@ -27,7 +29,9 @@ onBeforeMount(() => {
 
 <template>
   <div class="flex h-screen w-screen justify-center overflow-hidden">
-    <MainPlayerView :make-call="makeCall" :main-player-index="lookingAtIndex" :current-round="currentRound" :players="gameState.players" :player-count="playerCount" class="bottom-0" />
+    <MainPlayerView
+      :main-player-index="lookingAtIndex" :player-count="playerCount" :judgement-game="judgementGame"
+    />
     <button :disabled="gameState.gameFinished" class=" fixed right-0 top-0 z-50 h-[40px] w-[100px] p-2 text-white" :class="newRoundButtonClass" @click="newRound">
       <p v-if=" totalRounds - roundsPlayed > 0">
         New Round
