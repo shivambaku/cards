@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { stringify } from 'node:querystring';
 import { ref } from 'vue';
 import type { JudgementPlayer, JudgementRoundCall } from '@/composables/useJudgementGame';
 
@@ -53,7 +52,7 @@ function submit() {
 </script>
 
 <template>
-  <div class="fixed inset-0  z-50 flex items-center justify-center">
+  <div class="fixed inset-0  z-[60] flex items-center justify-center">
     <div class="mb-20 w-[220px] rounded-lg bg-white p-6 shadow-lg">
       <p class="mb-4 text-center text-sm font-semibold">
         {{ player.name }} <br> Please make a call

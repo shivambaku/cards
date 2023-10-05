@@ -13,4 +13,3 @@ defineProps<{
     <img v-if="player === 'other'" src="/src/assets/cards/back.svg" :alt="card.name" class="max-h-full max-w-full border-[1px] border-black">
   </div>
 </template>
-Card

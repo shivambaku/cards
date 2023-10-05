@@ -2,6 +2,8 @@ import { computed, ref } from 'vue';
 import { type Card, Suit, useCards } from './useCards';
 import type { Player } from '@/models/player';
 
+export type JudgementGameStatus = 'Calling' | 'Playing' | 'Finished';
+
 export interface JudgementPlayer extends Player {
   score: number
 }
@@ -19,7 +21,7 @@ export interface JudgementRound {
   currentCardCount: number
   currentTrump: Suit | 'No Trump'
   currentCallPlayer: JudgementPlayer
-  state: 'Calling' | 'Playing' | 'Finished'
+  state: JudgementGameStatus
   turns: JudgementTurn[]
   calls: JudgementRoundCall[]
   hands: JudgementRoundHand[]
@@ -104,6 +106,12 @@ export function useJudgementGame(numberOfPlayers: number) {
     return currentRound.value.turns[currentRound.value.turns.length - 1];
   });
 
+  const currentPlayer = computed(() => {
+    if (currentRound.value.state === 'Calling')
+      return currentRound.value.currentCallPlayer;
+    return currentTurn.value.currentPlayPlayer;
+  });
+
   function cardValueToJudgementCardValue(value: number) {
     return value === 1 ? 14 : value;
   }
@@ -157,7 +165,7 @@ export function useJudgementGame(numberOfPlayers: number) {
 
   function playCard(play: JudgementTurnPlay) {
     if (play.player !== currentTurn.value.currentPlayPlayer)
-      throw new Error(`It is not ${play.player}'s turn`);
+      throw new Error('Not your turn');
 
     const hand = currentRound.value.hands.find(h => h.player === play.player)!;
 
@@ -173,12 +181,14 @@ export function useJudgementGame(numberOfPlayers: number) {
     hand.cards.splice(hand.cards.indexOf(play.card), 1);
 
     const isLastPersonToPlay = currentTurn.value.plays.length === gameState.value.players.length;
-
     if (isLastPersonToPlay)
       return finishTurn();
 
     const currentPlayPlayerIndex = gameState.value.players.indexOf(currentTurn.value.currentPlayPlayer);
-    const nextPlayPlayer = gameState.value.players[currentPlayPlayerIndex + 1];
+    let nextPlayPlayer = gameState.value.players[currentPlayPlayerIndex + 1];
+    if (nextPlayPlayer === undefined)
+      nextPlayPlayer = gameState.value.players[0];
+
     currentTurn.value.currentPlayPlayer = nextPlayPlayer;
   }
 
@@ -187,7 +197,7 @@ export function useJudgementGame(numberOfPlayers: number) {
       if (play.card.suit === currentRound.value.currentTrump && winner.card.suit !== currentRound.value.currentTrump)
         return play;
 
-      if (play.card.suit === winner.card.suit && play.card.value > winner.card.value)
+      if (play.card.suit === winner.card.suit && cardValueToJudgementCardValue(play.card.value) > cardValueToJudgementCardValue(winner.card.value))
         return play;
 
       return winner;
@@ -261,9 +271,12 @@ export function useJudgementGame(numberOfPlayers: number) {
     roundsPlayed,
     currentRound,
     currentTurn,
+    currentPlayer,
     dealCards,
     makeCall,
     playCard,
     finishRound,
   };
 }
+
+export type JudgementGame = ReturnType<typeof useJudgementGame>;
